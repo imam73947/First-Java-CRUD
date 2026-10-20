@@ -1,3 +1,4 @@
+
 package com.imam.firstjavacrud.controller;
 
 import com.imam.firstjavacrud.model.Student;
@@ -5,6 +6,8 @@ import com.imam.firstjavacrud.repository.StudentRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class StudentController {
@@ -36,7 +39,8 @@ public class StudentController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         Student student = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid student ID: " + id));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Invalid student ID: " + id));
 
         model.addAttribute("student", student);
         return "student-form";
@@ -46,5 +50,27 @@ public class StudentController {
     public String deleteStudent(@PathVariable Long id) {
         repository.deleteById(id);
         return "redirect:/";
+    }
+
+    @GetMapping("/search")
+    public String searchStudents(
+            @RequestParam(required = false) Long id,
+            Model model) {
+
+        if (id == null) {
+            model.addAttribute("students", repository.findAll());
+        } else {
+            repository.findById(id).ifPresentOrElse(
+                    student -> model.addAttribute(
+                            "students", List.of(student)),
+                    () -> {
+                        model.addAttribute("students", List.of());
+                        model.addAttribute("message", "Student not found.");
+                    }
+            );
+        }
+
+        model.addAttribute("searchId", id);
+        return "students";
     }
 }
