@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Student Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 40px;
+        }
+        .container {
+            max-width: 950px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+        h1 { color: #1e293b; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th { background: #e2e8f0; }
+        .btn {
+            display: inline-block;
+            padding: 9px 14px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            background: #2563eb;
+        }
+        .delete { background: #dc2626; }
+        .edit { background: #059669; }
+        .inline { display: inline; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Student Management System</h1>
+    <p>First Java CRUD Application</p>
+
+    <a class="btn" th:href="@{/add}">+ Add Student</a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Course</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${students}">
+            <td th:text="${student.id}"></td>
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.email}"></td>
+            <td th:text="${student.course}"></td>
+            <td>
+                <a class="btn edit"
+                   th:href="@{/edit/{id}(id=${student.id})}">Edit</a>
+
+                <form class="inline"
+                      th:action="@{/delete/{id}(id=${student.id})}"
+                      method="post">
+                    <button class="btn delete" type="submit"
+                            onclick="return confirm('Delete this student?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(students)}">
+            <td colspan="5">No students yet. Add your first student!</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
